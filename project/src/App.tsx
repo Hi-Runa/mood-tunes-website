@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Music, Send } from 'lucide-react';
 import { analyzeMood, generatePlaylist } from './utils/spotify';
+import { Camera } from './components/Camera';
 
 interface Track {
   id: string;
@@ -13,6 +14,7 @@ function App() {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const [tracks, setTracks] = useState<Track[]>([]);
+  const [showCamera, setShowCamera] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +31,10 @@ function App() {
     }
   };
 
+  const handleMoodDetected = (detectedMood: string) => {
+    setText(prevText => `${prevText} ${detectedMood}`.trim());
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-black text-white">
       <div className="container mx-auto px-4 py-12">
@@ -38,6 +44,22 @@ function App() {
           <p className="text-lg text-gray-300 text-center">
             Tell us how you're feeling, and we'll create the perfect playlist for you
           </p>
+        </div>
+
+        <div className="max-w-2xl mx-auto mb-8">
+          <button
+            onClick={() => setShowCamera(!showCamera)}
+            className="w-full mb-4 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 backdrop-blur-sm transition-colors rounded-lg p-4 flex items-center justify-center gap-2"
+          >
+            <CameraIcon className="w-5 h-5" />
+            {showCamera ? 'Hide Camera' : 'Show Camera'}
+          </button>
+
+          {showCamera && (
+            <div className="mb-8">
+              <Camera onMoodDetected={handleMoodDetected} />
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="max-w-2xl mx-auto mb-12">
